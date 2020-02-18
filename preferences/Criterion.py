@@ -1,3 +1,6 @@
+from CriterionName import CriterionName
+
+
 class Criterion:
     """Criterion class.
 
@@ -13,7 +16,7 @@ class Criterion:
         self.__item = item
         self.__criterion_name = criterion_name
         self.__criterion_value = criterion_value
-    
+
     def get_item(self):
         """Getter for the item.
         """
@@ -22,9 +25,22 @@ class Criterion:
     def get_name(self):
         """Getter for the criterion name.
         """
-        return self.__criterion_name.value
-    
+        return self.__criterion_name
+
     def get_value(self):
         """Getter for the criterion value.
         """
-        return self.__criterion_value.value
+        return self.__criterion_value
+
+    def __eq__(self, criterion):
+        """TODO.
+        """
+        if type(criterion) == str:
+            return self.__criterion_name.name == criterion
+        if type(criterion) == int:
+            return self.__criterion_name.value == criterion
+        if type(criterion) == CriterionName:
+            return self.__criterion_name.value == criterion.value
+        if type(criterion) == Criterion:
+            return self.__criterion_name.value == criterion.get_name().value
+        # TODO: raise Err

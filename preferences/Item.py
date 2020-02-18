@@ -13,13 +13,20 @@ class Item:
         """
         self.__name = name
         self.__description = description
-    
+
     def get_name(self):
         """Getter for the name.
         """
         return self.__name
-    
+
     def get_value(self, preference, criterion_name):
         """TODO.
         """
-        return preference.get_criterion_value_from_name(criterion_name)
+        return preference.get_criterion_value(criterion_name)
+
+    def __eq__(self, item):
+        """TODO.
+        """
+        if type(item) == str:
+            return self.__name == item
+        return self.__name == item.get_name()

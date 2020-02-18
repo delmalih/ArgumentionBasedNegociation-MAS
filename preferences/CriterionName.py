@@ -1,5 +1,6 @@
 import enum
 
+
 class CriterionName(enum.Enum):
     """CriterionName class.
     """

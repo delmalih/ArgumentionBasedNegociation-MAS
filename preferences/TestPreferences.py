@@ -5,6 +5,7 @@ from Criterion import Criterion
 from CriterionName import CriterionName
 from CriterionValue import CriterionValue
 
+
 class TestPreferences(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
@@ -12,14 +13,16 @@ class TestPreferences(unittest.TestCase):
         """
         super().__init__(*args, **kwargs)
         self.__preference = Preferences()
-        self.__diesel_engine = Item("Diesel Engine", "A super cool diesel engine")
-        self.__electric_engine = Item("Electric Engine", "A very quiet engine")
+        self.__diesel_engine = Item("Diesel Engine",
+                                    "A super cool diesel engine")
+        self.__electric_engine = Item("Electric Engine",
+                                      "A very quiet engine")
         self.setup()
 
     def setup(self):
         """TODO.
         """
-        
+
         # Set criterion name list
         self.__preference.set_criterion_name_list([
             CriterionName.PRODUCTION_COST,
@@ -30,37 +33,75 @@ class TestPreferences(unittest.TestCase):
         ])
 
         # Set criterions
-        self.__preference.add_criterion(Criterion(self.__diesel_engine, CriterionName.PRODUCTION_COST, CriterionValue.GOOD))
-        self.__preference.add_criterion(Criterion(self.__diesel_engine, CriterionName.CONSUMPTION, CriterionValue.GOOD))
-        self.__preference.add_criterion(Criterion(self.__diesel_engine, CriterionName.DURABILITY, CriterionValue.VERY_GOOD))
-        self.__preference.add_criterion(Criterion(self.__diesel_engine, CriterionName.ENVIRONMENT_IMPACT, CriterionValue.VERY_BAD))
-        self.__preference.add_criterion(Criterion(self.__diesel_engine, CriterionName.NOISE, CriterionValue.VERY_BAD))
-        self.__preference.add_criterion(Criterion(self.__electric_engine, CriterionName.PRODUCTION_COST, CriterionValue.BAD))
-        self.__preference.add_criterion(Criterion(self.__electric_engine, CriterionName.CONSUMPTION, CriterionValue.BAD))
-        self.__preference.add_criterion(Criterion(self.__electric_engine, CriterionName.DURABILITY, CriterionValue.GOOD))
-        self.__preference.add_criterion(Criterion(self.__electric_engine, CriterionName.ENVIRONMENT_IMPACT, CriterionValue.VERY_GOOD))
-        self.__preference.add_criterion(Criterion(self.__electric_engine, CriterionName.NOISE, CriterionValue.GOOD))
+        self.__preference.add_criterion(Criterion(
+            self.__diesel_engine,
+            CriterionName.PRODUCTION_COST,
+            CriterionValue.GOOD))
+        self.__preference.add_criterion(Criterion(
+            self.__diesel_engine,
+            CriterionName.CONSUMPTION,
+            CriterionValue.GOOD))
+        self.__preference.add_criterion(Criterion(
+            self.__diesel_engine,
+            CriterionName.DURABILITY,
+            CriterionValue.VERY_GOOD))
+        self.__preference.add_criterion(Criterion(
+            self.__diesel_engine,
+            CriterionName.ENVIRONMENT_IMPACT,
+            CriterionValue.VERY_BAD))
+        self.__preference.add_criterion(Criterion(
+            self.__diesel_engine,
+            CriterionName.NOISE,
+            CriterionValue.VERY_BAD))
+        self.__preference.add_criterion(Criterion(
+            self.__electric_engine,
+            CriterionName.PRODUCTION_COST,
+            CriterionValue.BAD))
+        self.__preference.add_criterion(Criterion(
+            self.__electric_engine,
+            CriterionName.CONSUMPTION,
+            CriterionValue.BAD))
+        self.__preference.add_criterion(Criterion(
+            self.__electric_engine,
+            CriterionName.DURABILITY,
+            CriterionValue.GOOD))
+        self.__preference.add_criterion(Criterion(
+            self.__electric_engine,
+            CriterionName.ENVIRONMENT_IMPACT,
+            CriterionValue.VERY_GOOD))
+        self.__preference.add_criterion(Criterion(
+            self.__electric_engine,
+            CriterionName.NOISE,
+            CriterionValue.GOOD))
 
     def test_item_value(self):
         """TODO.
         """
-        value = self.__diesel_engine.get_value(self.__preference, CriterionName.PRODUCTION_COST)
-        self.assertEqual(value, CriterionValue.GOOD.value)
-    
+        value = self.__diesel_engine.get_value(
+            self.__preference,
+            CriterionName.PRODUCTION_COST)
+        self.assertEqual(value, CriterionValue.GOOD)
+
     def test_is_preferred_criterion(self):
         """TODO.
         """
-        is_preferred = self.__preference.is_preferred_criterion(CriterionName.CONSUMPTION, CriterionName.NOISE)
+        is_preferred = self.__preference.is_preferred_criterion(
+            CriterionName.CONSUMPTION,
+            CriterionName.NOISE)
         self.assertTrue(is_preferred)
-    
+
     def test_is_preferred_item(self):
         """TODO.
         """
-        is_preferred1 = self.__preference.is_preferred_item(self.__diesel_engine, self.__electric_engine)
-        is_preferred2 = self.__preference.is_preferred_item(self.__electric_engine, self.__diesel_engine)
+        is_preferred1 = self.__preference.is_preferred_item(
+            self.__diesel_engine,
+            self.__electric_engine)
+        is_preferred2 = self.__preference.is_preferred_item(
+            self.__electric_engine,
+            self.__diesel_engine)
         self.assertFalse(is_preferred1)
         self.assertTrue(is_preferred2)
-    
+
     def test_score(self):
         """TODO.
         """
@@ -68,6 +109,7 @@ class TestPreferences(unittest.TestCase):
         score2 = self.__preference.compute_item_score(self.__electric_engine)
         self.assertEqual(score1, 47)
         self.assertEqual(score2, 48)
+
 
 if __name__ == '__main__':
     unittest.main()
