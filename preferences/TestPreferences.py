@@ -100,7 +100,7 @@ class TestPreferences(unittest.TestCase):
     def test_most_preferred(self):
         most_preferred_item = self.__preference.most_preferred([
             self.__diesel_engine, self.__electric_engine])
-        self.assertTrue(most_preferred_item == self.__diesel_engine)
+        self.assertTrue(most_preferred_item == self.__electric_engine)
 
 
 if __name__ == '__main__':

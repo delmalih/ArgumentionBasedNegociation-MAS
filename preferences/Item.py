@@ -30,3 +30,8 @@ class Item:
         if type(item) == str:
             return self.__name == item
         return self.__name == item.get_name()
+
+    def __repr__(self):
+        """TODO.
+        """
+        return f"{self.__name}: {self.__description}"
