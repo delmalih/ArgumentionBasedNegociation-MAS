@@ -64,6 +64,20 @@ class Preferences:
         return level1 >= level2
 
     def is_preferred_item(self, item1, item2):
+        """TODO.
+        """
         score1 = self.compute_item_score(item1)
         score2 = self.compute_item_score(item2)
         return score1 >= score2
+
+    def most_preferred(self, items):
+        """TODO.
+        """
+        max_score = 0
+        best_item = None
+        for item in items:
+            item_score = self.compute_item_score(item)
+            if item_score > max_score:
+                max_score = item_score
+                best_item = item
+        return best_item

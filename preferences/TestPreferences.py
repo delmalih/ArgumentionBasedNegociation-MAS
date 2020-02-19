@@ -9,8 +9,6 @@ from CriterionValue import CriterionValue
 class TestPreferences(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        """TODO.
-        """
         super().__init__(*args, **kwargs)
         self.__preference = Preferences()
         self.__diesel_engine = Item("Diesel Engine",
@@ -20,9 +18,6 @@ class TestPreferences(unittest.TestCase):
         self.setup()
 
     def setup(self):
-        """TODO.
-        """
-
         # Set criterion name list
         self.__preference.set_criterion_name_list([
             CriterionName.PRODUCTION_COST,
@@ -75,24 +70,24 @@ class TestPreferences(unittest.TestCase):
             CriterionValue.GOOD))
 
     def test_item_value(self):
-        """TODO.
-        """
         value = self.__diesel_engine.get_value(
             self.__preference,
             CriterionName.PRODUCTION_COST)
         self.assertEqual(value, CriterionValue.GOOD)
 
     def test_is_preferred_criterion(self):
-        """TODO.
-        """
         is_preferred = self.__preference.is_preferred_criterion(
             CriterionName.CONSUMPTION,
             CriterionName.NOISE)
         self.assertTrue(is_preferred)
 
+    def test_score(self):
+        score1 = self.__preference.compute_item_score(self.__diesel_engine)
+        score2 = self.__preference.compute_item_score(self.__electric_engine)
+        self.assertEqual(score1, 47)
+        self.assertEqual(score2, 48)
+
     def test_is_preferred_item(self):
-        """TODO.
-        """
         is_preferred1 = self.__preference.is_preferred_item(
             self.__diesel_engine,
             self.__electric_engine)
@@ -102,13 +97,10 @@ class TestPreferences(unittest.TestCase):
         self.assertFalse(is_preferred1)
         self.assertTrue(is_preferred2)
 
-    def test_score(self):
-        """TODO.
-        """
-        score1 = self.__preference.compute_item_score(self.__diesel_engine)
-        score2 = self.__preference.compute_item_score(self.__electric_engine)
-        self.assertEqual(score1, 47)
-        self.assertEqual(score2, 48)
+    def test_most_preferred(self):
+        most_preferred_item = self.__preference.most_preferred([
+            self.__diesel_engine, self.__electric_engine])
+        self.assertTrue(most_preferred_item == self.__diesel_engine)
 
 
 if __name__ == '__main__':
