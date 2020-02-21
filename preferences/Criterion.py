@@ -1,4 +1,14 @@
+###########
+# Imports #
+###########
+
+
 from CriterionName import CriterionName
+
+
+#############
+# Criterion #
+#############
 
 
 class Criterion:

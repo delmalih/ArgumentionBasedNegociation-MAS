@@ -1,8 +1,18 @@
+###########
+# Imports #
+###########
+
+
 import enum
 
 
+##################
+# CriterionValue #
+##################
+
+
 class CriterionValue(enum.Enum):
-    """Value class.
+    """CriterionValue class.
     """
     VERY_BAD = 1
     BAD = 2

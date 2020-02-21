@@ -1,4 +1,14 @@
+###########
+# Imports #
+###########
+
+
 import enum
+
+
+#################
+# CriterionName #
+#################
 
 
 class CriterionName(enum.Enum):

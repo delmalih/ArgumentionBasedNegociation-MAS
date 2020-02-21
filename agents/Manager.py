@@ -1,4 +1,14 @@
+###########
+# Imports #
+###########
+
+
 from osbrain.agent import Agent
+
+
+###########
+# Manager #
+###########
 
 
 class Manager(Agent):
@@ -15,3 +25,6 @@ class Manager(Agent):
         """
         self.__list_items = []
         self.__selected_items = []
+
+        """Initializes the communication channel.
+        """

@@ -1,3 +1,8 @@
+###############
+# Preferences #
+###############
+
+
 class Preferences:
     """Preferences class.
     """

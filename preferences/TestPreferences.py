@@ -1,9 +1,19 @@
+###########
+# Imports #
+###########
+
+
 import unittest
 from Preferences import Preferences
 from Item import Item
 from Criterion import Criterion
 from CriterionName import CriterionName
 from CriterionValue import CriterionValue
+
+
+###################
+# TestPreferences #
+###################
 
 
 class TestPreferences(unittest.TestCase):
@@ -101,6 +111,11 @@ class TestPreferences(unittest.TestCase):
         most_preferred_item = self.__preference.most_preferred([
             self.__diesel_engine, self.__electric_engine])
         self.assertTrue(most_preferred_item == self.__electric_engine)
+
+
+########
+# MAIN #
+########
 
 
 if __name__ == '__main__':
