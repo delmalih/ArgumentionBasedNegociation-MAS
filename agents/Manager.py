@@ -64,15 +64,17 @@ class Manager(Agent):
         """TODO.
         """
         if message.get_performative() == MessagePerformative.QUERY_REF:
-            self.answer_query_ref(message)
+            answer = self.answer_query_ref(message)
+        self.log_info(answer)
+        return answer
 
     def answer_query_ref(self, message):
         """TODO.
         """
         if message.get_content() == "LIST ITEMS":
-            self.answer_request_list_items(message)
+            return self.answer_request_list_items(message)
         if message.get_content() == "SELECTED ITEMS":
-            self.answer_request_selected_items(message)
+            return self.answer_request_selected_items(message)
 
     def answer_request_list_items(self, message):
         """TODO.
@@ -80,7 +82,7 @@ class Manager(Agent):
         receiver = message.get_sender()
         performative = MessagePerformative.INFORM_REF
         content = self.__list_items
-        self.send_message(receiver, performative, content)
+        return Message(self, receiver, performative, content)
 
     def answer_request_selected_items(self, message):
         """TODO.
@@ -88,4 +90,4 @@ class Manager(Agent):
         receiver = message.get_sender()
         performative = MessagePerformative.INFORM_REF
         content = self.__selected_items
-        self.send_message(receiver, performative, content)
+        return Message(self, receiver, performative, content)

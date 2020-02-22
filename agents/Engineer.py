@@ -52,6 +52,11 @@ class Engineer(Agent):
         """
         pass
 
+    def treat_answer(self, message):
+        """TODO.
+        """
+        pass
+
     def send_message(self, receiver, performative, content):
         message = Message(self, receiver, performative, content)
         message.send()
@@ -62,6 +67,8 @@ class Engineer(Agent):
         performative = MessagePerformative.QUERY_REF
         content = "LIST ITEMS"
         self.send_message(manager, performative, content)
+        answer = self.recv(manager.get_channel())
+        self.treat_answer(answer)
 
     def ask_selected_items(self, manager):
         """TODO.
@@ -69,3 +76,5 @@ class Engineer(Agent):
         performative = MessagePerformative.QUERY_REF
         content = "SELECTED ITEMS"
         self.send_message(manager, performative, content)
+        answer = self.recv(manager.get_channel())
+        self.treat_answer(answer)
