@@ -4,9 +4,10 @@
 
 
 import unittest
-from Preferences import Preferences
+
 from Item import Item
 from Criterion import Criterion
+from Preferences import Preferences
 from CriterionName import CriterionName
 from CriterionValue import CriterionValue
 

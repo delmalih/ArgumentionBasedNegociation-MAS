@@ -5,6 +5,9 @@
 
 from osbrain.agent import Agent
 
+from messages.MessagePerformative import MessagePerformative
+from messages.Message import Message
+
 
 ###########
 # Manager #
@@ -26,5 +29,63 @@ class Manager(Agent):
         self.__list_items = []
         self.__selected_items = []
 
-        """Initializes the communication channel.
+        """Initializes the communication channels.
         """
+        self.bind('REP', alias=f"{self.name}-channel",
+                  handler=self.answer_handler)
+        self.__channel = f"{self.name}-channel"
+
+        """Prints that the agent is initialized
+        """
+        self.log_info(f"{self.name} is initialized !")
+
+    def add_item(self, item):
+        """TODO.
+        """
+        if item not in self.__list_items:
+            self.__list_items.append(item)
+
+    def add_selected_item(self, item):
+        """TODO.
+        """
+        if item not in self.__selected_items:
+            self.__selected_items.append(item)
+
+    def get_channel(self):
+        """Getter for the channel attribute.
+        """
+        return self.__channel
+
+    def send_message(self, receiver, performative, content):
+        message = Message(self, receiver, performative, content)
+        message.send()
+
+    def answer_handler(self, message):
+        """TODO.
+        """
+        if message.get_performative() == MessagePerformative.QUERY_REF:
+            self.answer_query_ref(message)
+
+    def answer_query_ref(self, message):
+        """TODO.
+        """
+        if message.get_content() == "LIST ITEMS":
+            self.answer_request_list_items(message)
+        if message.get_content() == "SELECTED ITEMS":
+            self.answer_request_selected_items(message)
+
+    def answer_request_list_items(self, message):
+        """TODO.
+        """
+        receiver = message.get_sender()
+        performative = MessagePerformative.INFORM_REF
+        content = self.__list_items
+        self.send_message(receiver, performative, content)
+
+    def answer_request_selected_items(self, message):
+        """TODO.
+        """
+        receiver = message.get_sender()
+        performative = MessagePerformative.INFORM_REF
+        content = self.__selected_items
+        self.send_message(receiver, performative, content)
