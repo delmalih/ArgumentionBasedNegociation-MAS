@@ -81,7 +81,7 @@ class Manager(Agent):
         """
         receiver = message.get_sender()
         performative = MessagePerformative.INFORM_REF
-        content = self.__list_items
+        content = {"LIST ITEMS": self.__list_items}
         return Message(self, receiver, performative, content)
 
     def answer_request_selected_items(self, message):
@@ -89,5 +89,5 @@ class Manager(Agent):
         """
         receiver = message.get_sender()
         performative = MessagePerformative.INFORM_REF
-        content = self.__selected_items
+        content = {"SELECTED ITEMS": self.__selected_items}
         return Message(self, receiver, performative, content)

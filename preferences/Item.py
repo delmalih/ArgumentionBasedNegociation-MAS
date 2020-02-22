@@ -39,4 +39,4 @@ class Item:
     def __repr__(self):
         """TODO.
         """
-        return f"{self.__name}: {self.__description}"
+        return f"{self.__name}"
