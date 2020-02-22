@@ -23,3 +23,4 @@ class MessagePerformative(enum.Enum):
     COMMIT = 4
     ARGUE = 6
     INFORM_REF = 8
+    TAKE = 10

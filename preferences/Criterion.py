@@ -53,4 +53,7 @@ class Criterion:
             return self.__criterion_name.value == criterion.value
         if type(criterion) == Criterion:
             return self.__criterion_name.value == criterion.get_name().value
-        # TODO: raise Err
+        return False
+
+    def __str__(self):
+        return self.get_name()
