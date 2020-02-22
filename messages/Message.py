@@ -50,7 +50,7 @@ class Message:
     def get_content(self):
         """Getter for the content attribute.
         """
-        return str(self.__content)
+        return self.__content
 
     def needs_answer(self):
         """Returns true if the message needs an answer from the receiver.

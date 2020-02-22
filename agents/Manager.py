@@ -39,14 +39,13 @@ class Manager(Agent):
         """
         self.log_info(f"{self.name} is initialized !")
 
-    def add_item(self, item):
-        """TODO.
+    def set_list_items(self, items):
+        """Setter for list_items attribute.
         """
-        if item not in self.__list_items:
-            self.__list_items.append(item)
+        self.__list_items = items
 
     def add_selected_item(self, item):
-        """TODO.
+        """Adds an item to the list of selected items.
         """
         if item not in self.__selected_items:
             self.__selected_items.append(item)
@@ -65,7 +64,10 @@ class Manager(Agent):
         """
         if message.get_performative() == MessagePerformative.QUERY_REF:
             answer = self.answer_query_ref(message)
-        self.log_info(answer)
+        if message.get_performative() == MessagePerformative.TAKE:
+            answer = self.answer_take(message)
+        if message.needs_answer():
+            self.log_info(answer)
         return answer
 
     def answer_query_ref(self, message):
@@ -81,7 +83,7 @@ class Manager(Agent):
         """
         receiver = message.get_sender()
         performative = MessagePerformative.INFORM_REF
-        content = {"LIST ITEMS": self.__list_items}
+        content = ("LIST ITEMS", self.__list_items)
         return Message(self, receiver, performative, content)
 
     def answer_request_selected_items(self, message):
@@ -89,5 +91,12 @@ class Manager(Agent):
         """
         receiver = message.get_sender()
         performative = MessagePerformative.INFORM_REF
-        content = {"SELECTED ITEMS": self.__selected_items}
+        content = ("SELECTED ITEMS", self.__selected_items)
         return Message(self, receiver, performative, content)
+
+    def answer_take(self, message):
+        """TODO.
+        """
+        item = message.get_content()
+        self.add_selected_item(item)
+        return

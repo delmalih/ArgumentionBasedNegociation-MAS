@@ -26,6 +26,7 @@ class Engineer(Agent):
         """Initializes the agent.
         """
         self.__preferences = None
+        self.__list_items = []
 
         """Initializes the communication channels.
         """
@@ -55,11 +56,17 @@ class Engineer(Agent):
     def treat_answer(self, message):
         """TODO.
         """
-        pass
+        if message.get_performative() == MessagePerformative.INFORM_REF:
+            key, value = message.get_content()
+            if key == "LIST ITEMS":
+                self.__list_items = value
 
     def send_message(self, receiver, performative, content):
         message = Message(self, receiver, performative, content)
         message.send()
+        answer = self.recv(receiver.get_channel())
+        if message.needs_answer():
+            self.treat_answer(answer)
 
     def ask_list_items(self, manager):
         """TODO.
@@ -67,8 +74,6 @@ class Engineer(Agent):
         performative = MessagePerformative.QUERY_REF
         content = "LIST ITEMS"
         self.send_message(manager, performative, content)
-        answer = self.recv(manager.get_channel())
-        self.treat_answer(answer)
 
     def ask_selected_items(self, manager):
         """TODO.
@@ -76,5 +81,10 @@ class Engineer(Agent):
         performative = MessagePerformative.QUERY_REF
         content = "SELECTED ITEMS"
         self.send_message(manager, performative, content)
-        answer = self.recv(manager.get_channel())
-        self.treat_answer(answer)
+
+    def send_selected_item_to_manager(self, manager, item):
+        """TODO.
+        """
+        performative = MessagePerformative.TAKE
+        content = item
+        self.send_message(manager, performative, content)

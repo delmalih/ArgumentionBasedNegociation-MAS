@@ -30,8 +30,7 @@ if __name__ == "__main__":
     # Running agents
     engineer = run_agent(name="Engineer", base=Engineer)
     manager = run_agent(name="Manager", base=Manager)
-    manager.add_item(diesel_engine)
-    manager.add_item(electric_engine)
+    manager.set_list_items([electric_engine, diesel_engine])
 
     # Setup communications
     engineer.connect(manager.addr(manager.get_channel()),
@@ -41,6 +40,7 @@ if __name__ == "__main__":
 
     # Send messages
     engineer.ask_list_items(manager)
+    engineer.send_selected_item_to_manager(manager, diesel_engine)
     engineer.ask_selected_items(manager)
 
     # Close the sytem
