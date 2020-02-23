@@ -88,3 +88,10 @@ class Engineer(Agent):
         performative = MessagePerformative.TAKE
         content = item
         self.send_message(manager, performative, content)
+
+    def propose_item(self, agent):
+        """TODO.
+        """
+        performative = MessagePerformative.PROPOSE
+        content = self.__preferences.most_preferred(self.__list_items)
+        self.send_message(agent, performative, content)
