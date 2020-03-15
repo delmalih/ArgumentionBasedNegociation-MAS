@@ -55,9 +55,10 @@ class Manager(Agent):
         """
         return self.__channel
 
-    def send_message(self, receiver, performative, content):
-        message = Message(self, receiver, performative, content)
-        message.send()
+    def get_selected_items(self):
+        return self.__selected_items
+
+    # <-- Message Answering --> #
 
     def handle_message_reception(self, message):
         """TODO.
@@ -73,25 +74,9 @@ class Manager(Agent):
     def answer_query_ref(self, message):
         """TODO.
         """
-        if message.get_content() == "LIST ITEMS":
-            return self.answer_request_list_items(message)
-        if message.get_content() == "SELECTED ITEMS":
-            return self.answer_request_selected_items(message)
-
-    def answer_request_list_items(self, message):
-        """TODO.
-        """
         receiver = message.get_sender()
         performative = MessagePerformative.INFORM_REF
-        content = ("LIST ITEMS", self.__list_items)
-        return Message(self, receiver, performative, content)
-
-    def answer_request_selected_items(self, message):
-        """TODO.
-        """
-        receiver = message.get_sender()
-        performative = MessagePerformative.INFORM_REF
-        content = ("SELECTED ITEMS", self.__selected_items)
+        content = self.__list_items
         return Message(self, receiver, performative, content)
 
     def answer_take(self, message):

@@ -70,17 +70,17 @@ if __name__ == "__main__":
     """Main program.
     """
 
+    # System deployment
+    ns = run_nameserver()
+
     # Init items, criterions and preferences
     items = DEFAULT_ITEMS
     criterions = DEFAULT_CRITERIONS
     preferences_1, preferences_2 = init_preferences(criterions)
 
-    # System deployment
-    ns = run_nameserver()
-
     # Running agents
-    engineer1 = run_agent(name="Engineer_1", base=Engineer)
-    engineer2 = run_agent(name="Engineer_2", base=Engineer)
+    engineer1 = run_agent(name="Engineer1", base=Engineer)
+    engineer2 = run_agent(name="Engineer2", base=Engineer)
     manager = run_agent(name="Manager", base=Manager)
     manager.set_list_items(items)
 
@@ -88,12 +88,16 @@ if __name__ == "__main__":
     engineer1.set_preferences(preferences_1)
     engineer2.set_preferences(preferences_2)
 
+    # Register to manager
+    engineer1.register_manager(manager)
+    engineer2.register_manager(manager)
+
     # Setup communications
     init_all_communications([manager, engineer1, engineer2])
 
     # Send messages
-    engineer1.send_query_list_items(manager)
-    engineer2.send_query_list_items(manager)
+    engineer1.send_query(manager)
+    engineer2.send_query(manager)
     engineer1.send_propose_item(engineer2)
 
     # Close the sytem

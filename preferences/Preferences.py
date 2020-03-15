@@ -91,3 +91,9 @@ class Preferences:
                 max_score = item_score
                 best_item = item
         return best_item
+
+    def belongs_to_10percent_most_preferred(self, item, items):
+        sorted_items = sorted(items, key=lambda i: self.compute_item_score(i),
+                              reverse=True)
+        most_preferred_10percent = sorted_items[:int(0.1 * len(items))]
+        return item in most_preferred_10percent

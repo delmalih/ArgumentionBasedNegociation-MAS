@@ -28,7 +28,7 @@ class Engineer(Agent):
         self.__preferences = None
         self.__list_items = []
         self.__selected_items = []
-        self.__commited_items = []
+        self.__manager = None
 
         """Initializes the communication channels.
         """
@@ -50,7 +50,48 @@ class Engineer(Agent):
         """
         return self.__channel
 
-    # <-- General functions for message --> #
+    def register_manager(self, manager):
+        self.__manager = manager
+
+    def add_selected_item(self, item):
+        """Adds an item to the list of selected items.
+        """
+        if item not in self.__selected_items:
+            self.__selected_items.append(item)
+
+    def get_selected_items(self):
+        return self.__selected_items
+
+    # <-- Message Sending --> #
+
+    def send_message(self, receiver, performative, content):
+        message = Message(self, receiver, performative, content)
+        message.send()
+        answer = self.recv(receiver.get_channel())
+        if message.needs_answer():
+            self.treat_answer(answer)
+
+    def send_query(self, manager):
+        """TODO.
+        """
+        self.send_message(manager, MessagePerformative.QUERY_REF, None)
+
+    def send_propose_item(self, engineer):
+        """TODO.
+        """
+        content = self.__preferences.most_preferred(self.__list_items)
+        self.send_message(engineer, MessagePerformative.PROPOSE, content)
+
+    def send_commit_item(self, engineer, item):
+        self.add_selected_item(item)
+        self.send_message(engineer, MessagePerformative.COMMIT, item)
+
+    def send_take_item(self, manager, item):
+        """TODO.
+        """
+        self.send_message(manager, MessagePerformative.TAKE, item)
+
+    # <-- Message Answering --> #
 
     def handle_message_reception(self, message):
         """TODO.
@@ -63,62 +104,15 @@ class Engineer(Agent):
             self.log_info(answer)
         return answer
 
-    def treat_answer(self, message):
-        """TODO.
-        """
-        if message.get_performative() == MessagePerformative.INFORM_REF:
-            self.treat_inform_ref(message)
-        if message.get_performative() == MessagePerformative.ACCEPT:
-            self.treat_accept(message)
-        if message.get_performative() == MessagePerformative.ARGUE:
-            self.treat_argue(message)
-        if message.get_performative() == MessagePerformative.COMMIT:
-            self.treat_commit(message)
-
-    def send_message(self, receiver, performative, content):
-        message = Message(self, receiver, performative, content)
-        message.send()
-        answer = self.recv(receiver.get_channel())
-        if message.needs_answer():
-            self.treat_answer(answer)
-
-    # <-- Message Sending --> #
-
-    def send_query_list_items(self, manager):
-        """TODO.
-        """
-        self.send_message(manager, MessagePerformative.QUERY_REF, "LIST ITEMS")
-
-    def send_query_selected_items(self, manager):
-        """TODO.
-        """
-        self.send_message(manager, MessagePerformative.QUERY_REF, "SELECTED ITEMS")
-
-    def send_take_item(self, manager, item):
-        """TODO.
-        """
-        self.send_message(manager, MessagePerformative.TAKE, item)
-
-    def send_propose_item(self, engineer):
-        """TODO.
-        """
-        content = self.__preferences.most_preferred(self.__list_items)
-        self.send_message(engineer, MessagePerformative.PROPOSE, content)
-
-    def send_commit_item(self, engineer, item):
-        self.__commited_items.append(item)
-        self.send_message(engineer, MessagePerformative.COMMIT, item)
-
-    # <-- Message Answering --> #
-
     def answer_proposed_item(self, message):
         """TODO.
         """
         sender = message.get_sender()
         proposed_item = message.get_content()
-        most_preferred_item = self.__preferences.most_preferred(
-            self.__list_items)
-        if proposed_item == most_preferred_item:
+        # is_accepted = self.__preferences.belongs_to_10percent_most_preferred(
+        #     proposed_item, self.__list_items)
+        is_accepted = True
+        if is_accepted:
             answer = Message(self, sender, MessagePerformative.ACCEPT,
                              proposed_item)
             return answer
@@ -132,19 +126,27 @@ class Engineer(Agent):
         """
         sender = message.get_sender()
         item = message.get_content()
-        if item not in self.__commited_items:
-            self.__commited_items.append(item)
+        if item not in self.__selected_items:
+            self.add_selected_item(item)
             answer = Message(self, sender, MessagePerformative.COMMIT, item)
             return answer
 
     # <-- Treat Answers --> #
 
+    def treat_answer(self, message):
+        """TODO.
+        """
+        if message.get_performative() == MessagePerformative.INFORM_REF:
+            self.treat_inform_ref(message)
+        if message.get_performative() == MessagePerformative.ACCEPT:
+            self.treat_accept(message)
+        if message.get_performative() == MessagePerformative.ARGUE:
+            self.treat_argue(message)
+        if message.get_performative() == MessagePerformative.COMMIT:
+            self.treat_commit(message)
+
     def treat_inform_ref(self, message):
-        key, value = message.get_content()
-        if key == "LIST ITEMS":
-            self.__list_items = value
-        if key == "SELECTED ITEMS":
-            self.__selected_items = value
+        self.__list_items = message.get_content()
 
     def treat_accept(self, message):
         """TODO.
@@ -164,5 +166,7 @@ class Engineer(Agent):
         """
         sender = message.get_sender()
         item = message.get_content()
-        if item not in self.__commited_items:
+        if item not in self.__selected_items:
             self.send_commit_item(sender, item)
+        else:
+            self.send_take_item(self.__manager, item)
