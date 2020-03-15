@@ -3,7 +3,7 @@
 ###########
 
 
-from CriterionName import CriterionName
+from .CriterionName import CriterionName
 
 
 #############

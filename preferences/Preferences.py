@@ -29,6 +29,11 @@ class Preferences:
         """
         self.__criterions.append(criterion)
 
+    def add_criterions(self, criterions):
+        """TODO.
+        """
+        self.__criterions += criterions
+
     def get_criterion_value(self, criterion_name):
         """TODO.
         """

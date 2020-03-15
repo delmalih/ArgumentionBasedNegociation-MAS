@@ -32,7 +32,7 @@ class Manager(Agent):
         """Initializes the communication channels.
         """
         self.bind('REP', alias=f"{self.name}-channel",
-                  handler=self.answer_handler)
+                  handler=self.handle_message_reception)
         self.__channel = f"{self.name}-channel"
 
         """Prints that the agent is initialized
@@ -59,7 +59,7 @@ class Manager(Agent):
         message = Message(self, receiver, performative, content)
         message.send()
 
-    def answer_handler(self, message):
+    def handle_message_reception(self, message):
         """TODO.
         """
         if message.get_performative() == MessagePerformative.QUERY_REF:

@@ -5,11 +5,11 @@
 
 import unittest
 
-from Item import Item
-from Criterion import Criterion
-from Preferences import Preferences
-from CriterionName import CriterionName
-from CriterionValue import CriterionValue
+from preferences.Item import Item
+from preferences.Criterion import Criterion
+from preferences.Preferences import Preferences
+from preferences.CriterionName import CriterionName
+from preferences.CriterionValue import CriterionValue
 
 
 ###################
@@ -22,9 +22,9 @@ class TestPreferences(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__preference = Preferences()
-        self.__diesel_engine = Item("Diesel Engine",
+        self.__diesel_engine = Item("ICED",
                                     "A super cool diesel engine")
-        self.__electric_engine = Item("Electric Engine",
+        self.__electric_engine = Item("E",
                                       "A very quiet engine")
         self.setup()
 
@@ -32,9 +32,9 @@ class TestPreferences(unittest.TestCase):
         # Set criterion name list
         self.__preference.set_criterion_name_list([
             CriterionName.PRODUCTION_COST,
-            CriterionName.ENVIRONMENT_IMPACT,
             CriterionName.CONSUMPTION,
             CriterionName.DURABILITY,
+            CriterionName.ENVIRONMENT_IMPACT,
             CriterionName.NOISE,
         ])
 
@@ -42,7 +42,7 @@ class TestPreferences(unittest.TestCase):
         self.__preference.add_criterion(Criterion(
             self.__diesel_engine,
             CriterionName.PRODUCTION_COST,
-            CriterionValue.GOOD))
+            CriterionValue.VERY_GOOD))
         self.__preference.add_criterion(Criterion(
             self.__diesel_engine,
             CriterionName.CONSUMPTION,
@@ -66,7 +66,7 @@ class TestPreferences(unittest.TestCase):
         self.__preference.add_criterion(Criterion(
             self.__electric_engine,
             CriterionName.CONSUMPTION,
-            CriterionValue.BAD))
+            CriterionValue.VERY_BAD))
         self.__preference.add_criterion(Criterion(
             self.__electric_engine,
             CriterionName.DURABILITY,
@@ -78,13 +78,13 @@ class TestPreferences(unittest.TestCase):
         self.__preference.add_criterion(Criterion(
             self.__electric_engine,
             CriterionName.NOISE,
-            CriterionValue.GOOD))
+            CriterionValue.VERY_GOOD))
 
     def test_item_value(self):
         value = self.__diesel_engine.get_value(
             self.__preference,
             CriterionName.PRODUCTION_COST)
-        self.assertEqual(value, CriterionValue.GOOD)
+        self.assertEqual(value, CriterionValue.VERY_GOOD)
 
     def test_is_preferred_criterion(self):
         is_preferred = self.__preference.is_preferred_criterion(
@@ -95,8 +95,8 @@ class TestPreferences(unittest.TestCase):
     def test_score(self):
         score1 = self.__preference.compute_item_score(self.__diesel_engine)
         score2 = self.__preference.compute_item_score(self.__electric_engine)
-        self.assertEqual(score1, 47)
-        self.assertEqual(score2, 48)
+        self.assertEqual(score1, 54)
+        self.assertEqual(score2, -12)
 
     def test_is_preferred_item(self):
         is_preferred1 = self.__preference.is_preferred_item(
@@ -105,19 +105,10 @@ class TestPreferences(unittest.TestCase):
         is_preferred2 = self.__preference.is_preferred_item(
             self.__electric_engine,
             self.__diesel_engine)
-        self.assertFalse(is_preferred1)
-        self.assertTrue(is_preferred2)
+        self.assertTrue(is_preferred1)
+        self.assertFalse(is_preferred2)
 
     def test_most_preferred(self):
         most_preferred_item = self.__preference.most_preferred([
             self.__diesel_engine, self.__electric_engine])
-        self.assertTrue(most_preferred_item == self.__electric_engine)
-
-
-########
-# MAIN #
-########
-
-
-if __name__ == '__main__':
-    unittest.main()
+        self.assertTrue(most_preferred_item == self.__diesel_engine)
