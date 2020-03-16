@@ -30,7 +30,7 @@ class TestPreferences(unittest.TestCase):
 
     def setup(self):
         # Set criterion name list
-        self.__preference.set_criterion_name_list([
+        self.__preference.set_criterion_order([
             CriterionName.PRODUCTION_COST,
             CriterionName.CONSUMPTION,
             CriterionName.DURABILITY,
@@ -95,8 +95,8 @@ class TestPreferences(unittest.TestCase):
     def test_score(self):
         score1 = self.__preference.compute_item_score(self.__diesel_engine)
         score2 = self.__preference.compute_item_score(self.__electric_engine)
-        self.assertEqual(score1, 54)
-        self.assertEqual(score2, -12)
+        self.assertEqual(score1, 28)
+        self.assertEqual(score2, 7)
 
     def test_is_preferred_item(self):
         is_preferred1 = self.__preference.is_preferred_item(

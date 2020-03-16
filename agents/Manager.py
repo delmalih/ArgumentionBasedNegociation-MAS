@@ -56,6 +56,8 @@ class Manager(Agent):
         return self.__channel
 
     def get_selected_items(self):
+        """Getter for selected items.
+        """
         return self.__selected_items
 
     # <-- Message Answering --> #

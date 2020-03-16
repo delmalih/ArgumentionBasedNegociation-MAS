@@ -60,6 +60,8 @@ class Engineer(Agent):
             self.__selected_items.append(item)
 
     def get_selected_items(self):
+        """Getter for selected items.
+        """
         return self.__selected_items
 
     # <-- Message Sending --> #
@@ -109,9 +111,8 @@ class Engineer(Agent):
         """
         sender = message.get_sender()
         proposed_item = message.get_content()
-        # is_accepted = self.__preferences.belongs_to_10percent_most_preferred(
-        #     proposed_item, self.__list_items)
-        is_accepted = True
+        is_accepted = self.__preferences.belongs_to_10percent_most_preferred(
+            proposed_item, self.__list_items)
         if is_accepted:
             answer = Message(self, sender, MessagePerformative.ACCEPT,
                              proposed_item)

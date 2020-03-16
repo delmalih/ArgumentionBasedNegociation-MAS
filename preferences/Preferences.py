@@ -1,3 +1,11 @@
+###########
+# Imports #
+###########
+
+
+from preferences.CriterionValue import CriterionValue
+
+
 ###############
 # Preferences #
 ###############
@@ -13,15 +21,15 @@ class Preferences:
         self.__criterion_order = list()
         self.__criterions = list()
 
-    def set_criterion_name_list(self, criterion_names):
+    def set_criterion_order(self, criterion_order):
         """Set the list of criterions, ordered by importance.
         """
-        self.__criterion_order = criterion_names
+        self.__criterion_order = criterion_order
 
     def get_criterion_level(self, criterion):
         for i, criterion_name in enumerate(self.__criterion_order):
             if criterion == criterion_name:
-                return len(self.__criterion_order) - i
+                return i
         # TODO: raise Error
 
     def add_criterion(self, criterion):
@@ -51,19 +59,20 @@ class Preferences:
                 criterions.append(criterion)
         return criterions
 
-    def get_criterion_weight(self, criterion):
-        """TODO.
-        """
-        return self.get_criterion_level(criterion)
-
-    def compute_item_score(self, item):
+    def compute_item_score(self, item,
+                           CRITERION_THRESHOLD=CriterionValue.GOOD.value):
         """Computes the score of a given item.
         """
-        score = 0
+        binary_score = ["0"] * len(self.__criterion_order)
         for criterion in self.get_criterions_from_item(item):
+            criterion_level = self.get_criterion_level(criterion)
             criterion_value = criterion.get_value().value
-            criterion_weight = self.get_criterion_weight(criterion)
-            score += criterion_value * criterion_weight
+            if criterion_value >= CRITERION_THRESHOLD:
+                criterion_score = "1"
+            else:
+                criterion_score = "0"
+            binary_score[criterion_level] = criterion_score
+        score = int("".join(binary_score), 2)
         return score
 
     def is_preferred_criterion(self, criterion1, criterion2):
@@ -71,7 +80,7 @@ class Preferences:
         """
         level1 = self.get_criterion_level(criterion1)
         level2 = self.get_criterion_level(criterion2)
-        return level1 >= level2
+        return level1 <= level2
 
     def is_preferred_item(self, item1, item2):
         """TODO.

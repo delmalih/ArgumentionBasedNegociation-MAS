@@ -39,14 +39,14 @@ def init_preferences(criterions):
     preferences_2 = Preferences()
 
     # Set criterion name
-    preferences_1.set_criterion_name_list([
+    preferences_1.set_criterion_order([
         CriterionName.PRODUCTION_COST,
         CriterionName.ENVIRONMENT_IMPACT,
         CriterionName.CONSUMPTION,
         CriterionName.DURABILITY,
         CriterionName.NOISE,
     ])
-    preferences_2.set_criterion_name_list([
+    preferences_2.set_criterion_order([
         CriterionName.ENVIRONMENT_IMPACT,
         CriterionName.NOISE,
         CriterionName.PRODUCTION_COST,

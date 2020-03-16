@@ -14,8 +14,8 @@ import enum
 class CriterionValue(enum.Enum):
     """CriterionValue class.
     """
-    VERY_BAD = -1e1
-    BAD = -1e0
-    MEDIUM = 0
-    GOOD = 1e0
-    VERY_GOOD = 1e1
+    VERY_BAD = 0
+    BAD = 1
+    MEDIUM = 2
+    GOOD = 3
+    VERY_GOOD = 4
