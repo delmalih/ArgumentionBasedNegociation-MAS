@@ -139,6 +139,35 @@ def init_all_communications(agents):
                                    alias=agents[i2].get_channel())
 
 
+def print_data(items, criterions, preferences_1, preferences_2):
+    """TODO.
+    """
+    print("="*40)
+    print("||" + " "*16 + "ITEMS" + " "*15 + "||")
+    print("="*40)
+    for k, item in enumerate(items):
+        print(f"ITEM: {item.get_name()}")
+        for criterion in preferences_1.get_criterions_from_item(item):
+            criterion_name = criterion.get_name().name
+            criterion_value = preferences_1.get_criterion_value(
+                criterion_name, item).name
+            print(f"{criterion_name}: {criterion_value}")
+        if k != len(items) - 1:
+            print("-"*40)
+    print("\n")
+
+    print("="*40)
+    print("||" + " "*13 + "PREFERENCES" + " "*12 + "||")
+    print("="*40)
+    criterion_order_1 = map(lambda x: x.name,
+                            preferences_1.get_criterion_order())
+    criterion_order_2 = map(lambda x: x.name,
+                            preferences_2.get_criterion_order())
+    print(f"Agent 1: {' > '.join(criterion_order_1)}")
+    print(f"Agent 2: {' > '.join(criterion_order_2)}")
+    print("\n")
+
+
 ########
 # MAIN #
 ########
@@ -151,13 +180,16 @@ if __name__ == "__main__":
     # Get args
     args = parse_args()
 
-    # System deployment
-    ns = run_nameserver()
-
     # Init items, criterions and preferences
     items = init_items(args)
     criterions = init_criterions(args, items)
     preferences_1, preferences_2 = init_preferences(args, criterions)
+
+    # Prints
+    print_data(items, criterions, preferences_1, preferences_2)
+
+    # System deployment
+    ns = run_nameserver()
 
     # Running agents
     engineer1 = run_agent(name="Engineer1", base=Engineer)
