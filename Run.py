@@ -32,6 +32,11 @@ def parse_args():
         dest="random",
         help="Generate random data",
         action="store_true")
+    parser.add_argument(
+        "--print_data",
+        dest="print_data",
+        help="Print the data",
+        action="store_true")
     return parser.parse_args()
 
 
@@ -186,7 +191,8 @@ if __name__ == "__main__":
     preferences_1, preferences_2 = init_preferences(args, criterions)
 
     # Prints
-    print_data(items, criterions, preferences_1, preferences_2)
+    if args.print_data:
+        print_data(items, criterions, preferences_1, preferences_2)
 
     # System deployment
     ns = run_nameserver()
