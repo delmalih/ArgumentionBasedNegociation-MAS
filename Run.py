@@ -3,11 +3,16 @@
 ###########
 
 
+import argparse
+import numpy as np
 from osbrain import run_agent
 from osbrain import run_nameserver
 
+from preferences.Item import Item
+from preferences.Criterion import Criterion
 from preferences.Preferences import Preferences
 from preferences.CriterionName import CriterionName
+from preferences.CriterionValue import CriterionValue
 
 from agents.Manager import Manager
 from agents.Engineer import Engineer
@@ -20,17 +25,47 @@ from DefaultData import DEFAULT_ITEMS, DEFAULT_CRITERIONS
 ##################
 
 
-def init_all_communications(agents):
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--random",
+        dest="random",
+        help="Generate random data",
+        action="store_true")
+    return parser.parse_args()
+
+
+def init_items(args):
     """TODO.
     """
-    for i1 in range(len(agents)):
-        for i2 in range(len(agents)):
-            if i1 != i2:
-                agents[i1].connect(agents[i2].addr(agents[i2].get_channel()),
-                                   alias=agents[i2].get_channel())
+    if args.random:
+        items = []
+        for k in range(np.random.randint(2, 6)):
+            items.append(Item(f"Item{k + 1}", f"Item number {k + 1}"))
+        return items
+    else:
+        items = DEFAULT_ITEMS
+    return items
 
 
-def init_preferences(criterions):
+def init_criterions(args, items):
+    """TODO.
+    """
+    if args.random:
+        criterions = []
+        for item in items:
+            for criterion_name in CriterionName:
+                criterion_value = np.random.choice(CriterionValue)
+                criterions.append(Criterion(
+                    item,
+                    criterion_name,
+                    criterion_value))
+    else:
+        criterions = DEFAULT_CRITERIONS
+    return criterions
+
+
+def init_default_preferences(criterions):
     """TODO.
     """
 
@@ -61,6 +96,49 @@ def init_preferences(criterions):
     return preferences_1, preferences_2
 
 
+def init_random_preferences(criterions):
+    """TODO.
+    """
+
+    # Start preferences
+    preferences_1 = Preferences()
+    preferences_2 = Preferences()
+
+    # Set criterion name
+    criterion_order_1 = list(CriterionName)
+    criterion_order_2 = list(CriterionName)
+    np.random.shuffle(criterion_order_1)
+    np.random.shuffle(criterion_order_2)
+    preferences_1.set_criterion_order(criterion_order_1)
+    preferences_2.set_criterion_order(criterion_order_2)
+
+    # Add criterions
+    preferences_1.add_criterions(criterions)
+    preferences_2.add_criterions(criterions)
+
+    return preferences_1, preferences_2
+
+
+def init_preferences(args, criterions):
+    """TODO.
+    """
+    if args.random:
+        preferences = init_random_preferences(criterions)
+    else:
+        preferences = init_default_preferences(criterions)
+    return preferences
+
+
+def init_all_communications(agents):
+    """TODO.
+    """
+    for i1 in range(len(agents)):
+        for i2 in range(len(agents)):
+            if i1 != i2:
+                agents[i1].connect(agents[i2].addr(agents[i2].get_channel()),
+                                   alias=agents[i2].get_channel())
+
+
 ########
 # MAIN #
 ########
@@ -70,25 +148,26 @@ if __name__ == "__main__":
     """Main program.
     """
 
+    # Get args
+    args = parse_args()
+
     # System deployment
     ns = run_nameserver()
 
     # Init items, criterions and preferences
-    items = DEFAULT_ITEMS
-    criterions = DEFAULT_CRITERIONS
-    preferences_1, preferences_2 = init_preferences(criterions)
+    items = init_items(args)
+    criterions = init_criterions(args, items)
+    preferences_1, preferences_2 = init_preferences(args, criterions)
 
     # Running agents
     engineer1 = run_agent(name="Engineer1", base=Engineer)
     engineer2 = run_agent(name="Engineer2", base=Engineer)
     manager = run_agent(name="Manager", base=Manager)
-    manager.set_list_items(items)
 
-    # Setup preferences
+    # Setup agents
+    manager.set_list_items(items)
     engineer1.set_preferences(preferences_1)
     engineer2.set_preferences(preferences_2)
-
-    # Register to manager
     engineer1.register_manager(manager)
     engineer2.register_manager(manager)
 
@@ -98,7 +177,7 @@ if __name__ == "__main__":
     # Send messages
     engineer1.send_query(manager)
     engineer2.send_query(manager)
-    engineer2.start_negociation(engineer1)
+    engineer1.start_negociation(engineer2)
 
     # Close the sytem
     ns.shutdown()

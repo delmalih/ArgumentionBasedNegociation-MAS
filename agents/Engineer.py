@@ -78,6 +78,14 @@ class Engineer(Agent):
                 non_proposed_items.append(item)
         return non_proposed_items
 
+    def get_least_worst_proposed_item(self):
+        """TODO.
+        """
+        return sorted(
+            self.__proposed_item,
+            key=lambda item: self.__preferences.compute_item_score(item),
+            reverse=True)[0]
+
     # <-- Message Sending --> #
 
     def send_message(self, receiver, performative, content):
@@ -196,6 +204,7 @@ class Engineer(Agent):
                 answer = Message(self, sender, MessagePerformative.PROPOSE,
                                  item)
             else:
+                item = self.get_least_worst_proposed_item()
                 answer = Message(self, sender, MessagePerformative.ACCEPT,
                                  item)
         return answer
@@ -216,9 +225,11 @@ class Engineer(Agent):
             non_proposed_items = self.get_non_proposed_items()
             if len(non_proposed_items) > 0:
                 item = self.__preferences.most_preferred(non_proposed_items)
+                self.__proposed_item.append(item)
                 answer = Message(self, sender, MessagePerformative.PROPOSE,
                                  item)
             else:
+                item = self.get_least_worst_proposed_item()
                 answer = Message(self, sender, MessagePerformative.ACCEPT,
                                  item)
         return answer
@@ -299,6 +310,7 @@ class Engineer(Agent):
                 item = self.__preferences.most_preferred(non_proposed_items)
                 self.send_propose_item(sender, item)
             else:
+                item = self.get_least_worst_proposed_item()
                 self.send_accept_item(sender, item)
 
     def treat_commit(self, message):
