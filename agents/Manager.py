@@ -63,7 +63,7 @@ class Manager(Agent):
     # <-- Message Answering --> #
 
     def handle_message_reception(self, message):
-        """TODO.
+        """Message reception handler.
         """
         if message.get_performative() == MessagePerformative.QUERY_REF:
             answer = self.answer_query_ref(message)
@@ -74,7 +74,7 @@ class Manager(Agent):
         return answer
 
     def answer_query_ref(self, message):
-        """TODO.
+        """Answers to QUERY_REF performative.
         """
         receiver = message.get_sender()
         performative = MessagePerformative.INFORM_REF
@@ -82,7 +82,7 @@ class Manager(Agent):
         return Message(self, receiver, performative, content)
 
     def answer_take(self, message):
-        """TODO.
+        """Answers to TAKE performative.
         """
         item = message.get_content()
         self.add_selected_item(item)
