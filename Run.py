@@ -98,7 +98,7 @@ if __name__ == "__main__":
     # Send messages
     engineer1.send_query(manager)
     engineer2.send_query(manager)
-    engineer1.send_propose_item(engineer2)
+    engineer2.start_negociation(engineer1)
 
     # Close the sytem
     ns.shutdown()

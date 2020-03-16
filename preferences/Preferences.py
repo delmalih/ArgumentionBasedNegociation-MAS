@@ -26,26 +26,21 @@ class Preferences:
         """
         self.__criterion_order = criterion_order
 
+    def get_criterion_order(self):
+        """Getter for criterion_order attribute.
+        """
+        return self.__criterion_order
+
     def get_criterion_level(self, criterion):
         for i, criterion_name in enumerate(self.__criterion_order):
             if criterion == criterion_name:
                 return i
         # TODO: raise Error
 
-    def add_criterion(self, criterion):
+    def get_criterion_value(self, criterion_name, item):
         """TODO.
         """
-        self.__criterions.append(criterion)
-
-    def add_criterions(self, criterions):
-        """TODO.
-        """
-        self.__criterions += criterions
-
-    def get_criterion_value(self, criterion_name):
-        """TODO.
-        """
-        for criterion in self.__criterions:
+        for criterion in self.get_criterions_from_item(item):
             if criterion == criterion_name:
                 return criterion.get_value()
         # TODO: raise Error
@@ -59,9 +54,20 @@ class Preferences:
                 criterions.append(criterion)
         return criterions
 
-    def compute_item_score(self, item,
-                           CRITERION_THRESHOLD=CriterionValue.GOOD.value):
-        """Computes the score of a given item.
+    def add_criterion(self, criterion):
+        """TODO.
+        """
+        self.__criterions.append(criterion)
+
+    def add_criterions(self, criterions):
+        """TODO.
+        """
+        self.__criterions += criterions
+
+    def compute_item_binary_score(
+            self, item,
+            CRITERION_THRESHOLD=CriterionValue.GOOD.value):
+        """Computes the binary score of a given item.
         """
         binary_score = ["0"] * len(self.__criterion_order)
         for criterion in self.get_criterions_from_item(item):
@@ -72,8 +78,17 @@ class Preferences:
             else:
                 criterion_score = "0"
             binary_score[criterion_level] = criterion_score
-        score = int("".join(binary_score), 2)
-        return score
+        binary_score = "".join(binary_score)
+        return binary_score
+
+    def compute_item_score(
+            self, item,
+            CRITERION_THRESHOLD=CriterionValue.GOOD.value):
+        """Computes the score of a given item.
+        """
+        binary_score = self.compute_item_binary_score(item,
+                                                      CRITERION_THRESHOLD)
+        return int(binary_score, 2)
 
     def is_preferred_criterion(self, criterion1, criterion2):
         """TODO.

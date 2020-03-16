@@ -8,6 +8,9 @@ from osbrain.agent import Agent
 from messages.MessagePerformative import MessagePerformative
 from messages.Message import Message
 
+from arguments.Argument import Argument
+from arguments.Couple import Couple
+
 
 ############
 # Engineer #
@@ -29,6 +32,8 @@ class Engineer(Agent):
         self.__list_items = []
         self.__selected_items = []
         self.__manager = None
+        self.__used_arguments = []
+        self.__proposed_item = []
 
         """Initializes the communication channels.
         """
@@ -64,9 +69,20 @@ class Engineer(Agent):
         """
         return self.__selected_items
 
+    def get_non_proposed_items(self):
+        """TODO.
+        """
+        non_proposed_items = []
+        for item in self.__list_items:
+            if item not in self.__proposed_item:
+                non_proposed_items.append(item)
+        return non_proposed_items
+
     # <-- Message Sending --> #
 
     def send_message(self, receiver, performative, content):
+        """TODO.
+        """
         message = Message(self, receiver, performative, content)
         message.send()
         answer = self.recv(receiver.get_channel())
@@ -78,13 +94,30 @@ class Engineer(Agent):
         """
         self.send_message(manager, MessagePerformative.QUERY_REF, None)
 
-    def send_propose_item(self, engineer):
+    def send_propose_item(self, engineer, item):
         """TODO.
         """
-        content = self.__preferences.most_preferred(self.__list_items)
-        self.send_message(engineer, MessagePerformative.PROPOSE, content)
+        self.__proposed_item.append(item)
+        self.send_message(engineer, MessagePerformative.PROPOSE, item)
+
+    def send_ask_why_item(self, engineer, item):
+        """TODO.
+        """
+        self.send_message(engineer, MessagePerformative.ASK_WHY, item)
+
+    def send_argue_item(self, engineer, argument):
+        """TODO.
+        """
+        self.send_message(engineer, MessagePerformative.ARGUE, argument)
+
+    def send_accept_item(self, engineer, item):
+        """TODO.
+        """
+        self.send_message(engineer, MessagePerformative.ACCEPT, item)
 
     def send_commit_item(self, engineer, item):
+        """TODO.
+        """
         self.add_selected_item(item)
         self.send_message(engineer, MessagePerformative.COMMIT, item)
 
@@ -100,6 +133,12 @@ class Engineer(Agent):
         """
         if message.get_performative() == MessagePerformative.PROPOSE:
             answer = self.answer_proposed_item(message)
+        if message.get_performative() == MessagePerformative.ASK_WHY:
+            answer = self.answer_ask_why_item(message)
+        if message.get_performative() == MessagePerformative.ARGUE:
+            answer = self.answer_argue_item(message)
+        if message.get_performative() == MessagePerformative.ACCEPT:
+            answer = self.answer_accepted_item(message)
         if message.get_performative() == MessagePerformative.COMMIT:
             answer = self.answer_commited_item(message)
         if message.needs_answer():
@@ -111,6 +150,7 @@ class Engineer(Agent):
         """
         sender = message.get_sender()
         proposed_item = message.get_content()
+        self.__proposed_item.append(proposed_item)
         is_accepted = self.__preferences.belongs_to_10percent_most_preferred(
             proposed_item, self.__list_items)
         if is_accepted:
@@ -122,6 +162,14 @@ class Engineer(Agent):
                              proposed_item)
             return answer
 
+    def answer_accepted_item(self, message):
+        """TODO.
+        """
+        sender = message.get_sender()
+        item = message.get_content()
+        answer = Message(self, sender, MessagePerformative.COMMIT, item)
+        return answer
+
     def answer_commited_item(self, message):
         """TODO.
         """
@@ -132,6 +180,49 @@ class Engineer(Agent):
             answer = Message(self, sender, MessagePerformative.COMMIT, item)
             return answer
 
+    def answer_ask_why_item(self, message):
+        """TODO.
+        """
+        sender = message.get_sender()
+        item = message.get_content()
+        argument = self.argue_item(item, is_positive=True)
+        if argument is not None:
+            self.__used_arguments.append(argument)
+            answer = Message(self, sender, MessagePerformative.ARGUE, argument)
+        else:
+            non_proposed_items = self.get_non_proposed_items()
+            if len(non_proposed_items) > 0:
+                item = self.__preferences.most_preferred(non_proposed_items)
+                answer = Message(self, sender, MessagePerformative.PROPOSE,
+                                 item)
+            else:
+                answer = Message(self, sender, MessagePerformative.ACCEPT,
+                                 item)
+        return answer
+
+    def answer_argue_item(self, message):
+        """TODO.
+        """
+        sender = message.get_sender()
+        received_argument = message.get_content()
+        self.__used_arguments.append(received_argument)
+        item = received_argument.get_item()
+        is_positive = not received_argument.is_positive_argument()
+        argument = self.argue_item(item, is_positive=is_positive)
+        if argument is not None:
+            self.__used_arguments.append(argument)
+            answer = Message(self, sender, MessagePerformative.ARGUE, argument)
+        else:
+            non_proposed_items = self.get_non_proposed_items()
+            if len(non_proposed_items) > 0:
+                item = self.__preferences.most_preferred(non_proposed_items)
+                answer = Message(self, sender, MessagePerformative.PROPOSE,
+                                 item)
+            else:
+                answer = Message(self, sender, MessagePerformative.ACCEPT,
+                                 item)
+        return answer
+
     # <-- Treat Answers --> #
 
     def treat_answer(self, message):
@@ -139,8 +230,12 @@ class Engineer(Agent):
         """
         if message.get_performative() == MessagePerformative.INFORM_REF:
             self.treat_inform_ref(message)
+        if message.get_performative() == MessagePerformative.PROPOSE:
+            self.treat_propose(message)
         if message.get_performative() == MessagePerformative.ACCEPT:
             self.treat_accept(message)
+        if message.get_performative() == MessagePerformative.ASK_WHY:
+            self.treat_ask_why(message)
         if message.get_performative() == MessagePerformative.ARGUE:
             self.treat_argue(message)
         if message.get_performative() == MessagePerformative.COMMIT:
@@ -149,6 +244,19 @@ class Engineer(Agent):
     def treat_inform_ref(self, message):
         self.__list_items = message.get_content()
 
+    def treat_propose(self, message):
+        """TODO.
+        """
+        sender = message.get_sender()
+        proposed_item = message.get_content()
+        self.__proposed_item.append(proposed_item)
+        is_accepted = self.__preferences.belongs_to_10percent_most_preferred(
+            proposed_item, self.__list_items)
+        if is_accepted:
+            self.send_accept_item(sender, proposed_item)
+        else:
+            self.send_ask_why_item(sender, proposed_item)
+
     def treat_accept(self, message):
         """TODO.
         """
@@ -156,11 +264,42 @@ class Engineer(Agent):
         item = message.get_content()
         self.send_commit_item(sender, item)
 
-    # def treat_argue(self, message):
-    #     """TODO.
-    #     """
-    #     sender = message.get_sender()
-    #     item = message.get_content()
+    def treat_ask_why(self, message):
+        """TODO.
+        """
+        sender = message.get_sender()
+        item = message.get_content()
+        argument = self.argue_item(item, is_positive=True)
+        if argument is not None:
+            self.__used_arguments.append(argument)
+            self.send_argue_item(sender, argument)
+        else:
+            non_proposed_items = self.get_non_proposed_items()
+            if len(non_proposed_items) > 0:
+                item = self.__preferences.most_preferred(non_proposed_items)
+                self.send_propose_item(sender, item)
+            else:
+                self.send_accept_item(sender, item)
+
+    def treat_argue(self, message):
+        """TODO.
+        """
+        sender = message.get_sender()
+        received_argument = message.get_content()
+        self.__used_arguments.append(received_argument)
+        item = received_argument.get_item()
+        is_positive = not received_argument.is_positive_argument()
+        argument = self.argue_item(item, is_positive=is_positive)
+        if argument is not None:
+            self.__used_arguments.append(argument)
+            self.send_argue_item(sender, argument)
+        else:
+            non_proposed_items = self.get_non_proposed_items()
+            if len(non_proposed_items) > 0:
+                item = self.__preferences.most_preferred(non_proposed_items)
+                self.send_propose_item(sender, item)
+            else:
+                self.send_accept_item(sender, item)
 
     def treat_commit(self, message):
         """TODO.
@@ -171,3 +310,40 @@ class Engineer(Agent):
             self.send_commit_item(sender, item)
         else:
             self.send_take_item(self.__manager, item)
+
+    # <-- Argumentation --> #
+
+    def generate_arguments(self, item, is_positive):
+        """TODO.
+        """
+        arguments = []
+        binary_score = self.__preferences.compute_item_binary_score(item)
+        criterion_order = self.__preferences.get_criterion_order()
+        if is_positive:
+            requested_score = "1"
+        else:
+            requested_score = "0"
+        for k, criterion_name in enumerate(criterion_order):
+            if binary_score[k] == requested_score:
+                criterion_value = self.__preferences.get_criterion_value(
+                    criterion_name, item)
+                couple = Couple(criterion_name, criterion_value)
+                argument = Argument(item, is_positive, [couple])
+                if argument not in self.__used_arguments:
+                    arguments.append(argument)
+        return arguments
+
+    def argue_item(self, item, is_positive):
+        arguments = self.generate_arguments(item, is_positive=is_positive)
+        if len(arguments) > 0:
+            argument = arguments[0]
+            return argument
+        return None
+
+    # <-- RUN --> #
+
+    def start_negociation(self, engineer):
+        """TODO.
+        """
+        item = self.__preferences.most_preferred(self.get_non_proposed_items())
+        self.send_propose_item(engineer, item)

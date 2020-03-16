@@ -19,8 +19,8 @@ class MessagePerformative(enum.Enum):
     ASK_WHY = 3
     QUERY_REF = 5
     COMMIT = 7
+    ARGUE = 9
     # Those who does not need an answer
     ACCEPT = 2
-    ARGUE = 4
-    INFORM_REF = 6
-    TAKE = 8
+    INFORM_REF = 4
+    TAKE = 6

@@ -30,12 +30,16 @@ class Argument:
         """
         return self.__is_positive
 
-    def __str__(self):
+    def __repr__(self):
         """TODO.
         """
         if self.__is_positive:
             B = f"{self.__item}"
         else:
             B = f"not {self.__item}"
-        A = ", ".join(self.__list_couples)
+        list_couples_str = map(lambda x: x.__repr__(), self.__list_couples)
+        A = ", ".join(list_couples_str)
         return f"{B} <= {A}"
+
+    def __eq__(self, argument):
+        return self.__repr__() == argument.__repr__()

@@ -27,7 +27,7 @@ class Item:
     def get_value(self, preference, criterion_name):
         """TODO.
         """
-        return preference.get_criterion_value(criterion_name)
+        return preference.get_criterion_value(criterion_name, self)
 
     def __eq__(self, item):
         """TODO.
