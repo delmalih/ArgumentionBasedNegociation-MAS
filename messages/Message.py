@@ -58,6 +58,8 @@ class Message:
         return self.get_performative().value % 2 == 1
 
     def send(self):
+        """Sends the message.
+        """
         sender = self.get_sender()
         receiver = self.get_receiver()
         sender.log_info(self)

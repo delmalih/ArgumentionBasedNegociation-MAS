@@ -31,6 +31,16 @@ class Preferences:
         """
         return self.__criterion_order
 
+    def add_criterion(self, criterion):
+        """TODO.
+        """
+        self.__criterions.append(criterion)
+
+    def add_criterions(self, criterions):
+        """TODO.
+        """
+        self.__criterions += criterions
+
     def get_criterion_level(self, criterion):
         for i, criterion_name in enumerate(self.__criterion_order):
             if criterion == criterion_name:
@@ -53,16 +63,6 @@ class Preferences:
             if criterion.get_item() == item:
                 criterions.append(criterion)
         return criterions
-
-    def add_criterion(self, criterion):
-        """TODO.
-        """
-        self.__criterions.append(criterion)
-
-    def add_criterions(self, criterions):
-        """TODO.
-        """
-        self.__criterions += criterions
 
     def compute_item_binary_score(
             self, item,
