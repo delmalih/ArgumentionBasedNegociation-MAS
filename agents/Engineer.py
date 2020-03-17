@@ -89,7 +89,7 @@ class Engineer(Agent):
     # <-- Message Sending --> #
 
     def send_message(self, receiver, performative, content):
-        """TODO.
+        """Sends a message given a receiver, a performative and a content.
         """
         message = Message(self, receiver, performative, content)
         message.send()
@@ -103,7 +103,7 @@ class Engineer(Agent):
         self.send_message(manager, MessagePerformative.QUERY_REF, None)
 
     def send_propose_item(self, engineer, item):
-        """TODO.
+        """Sends PROPOSE performative to an engineer with a given item.
         """
         self.__proposed_item.append(item)
         self.send_message(engineer, MessagePerformative.PROPOSE, item)
@@ -355,7 +355,7 @@ class Engineer(Agent):
     # <-- RUN --> #
 
     def start_negotiation(self, engineer):
-        """TODO.
+        """Starts the negotiation between engineers.
         """
         item = self.__preferences.most_preferred(self.get_non_proposed_items())
         self.send_propose_item(engineer, item)
