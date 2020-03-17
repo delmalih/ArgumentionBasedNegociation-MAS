@@ -215,7 +215,7 @@ if __name__ == "__main__":
     # Send messages
     engineer1.send_query(manager)
     engineer2.send_query(manager)
-    engineer1.start_negociation(engineer2)
+    engineer1.start_negotiation(engineer2)
 
     # Close the sytem
     ns.shutdown()

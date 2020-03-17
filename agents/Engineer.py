@@ -354,7 +354,7 @@ class Engineer(Agent):
 
     # <-- RUN --> #
 
-    def start_negociation(self, engineer):
+    def start_negotiation(self, engineer):
         """TODO.
         """
         item = self.__preferences.most_preferred(self.get_non_proposed_items())
