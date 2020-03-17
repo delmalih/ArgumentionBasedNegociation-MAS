@@ -107,7 +107,7 @@ class Preferences:
     def most_preferred(self, items):
         """TODO.
         """
-        max_score = 0
+        max_score = -float("inf")
         best_item = None
         for item in items:
             item_score = self.compute_item_score(item)

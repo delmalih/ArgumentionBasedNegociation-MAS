@@ -3,6 +3,7 @@
 ###########
 
 
+import Pyro4
 import argparse
 import numpy as np
 from osbrain import run_agent
@@ -45,7 +46,7 @@ def init_items(args):
     """
     if args.random:
         items = []
-        for k in range(np.random.randint(2, 6)):
+        for k in range(np.random.randint(2, 11)):
             items.append(Item(f"Item{k + 1}", f"Item number {k + 1}"))
         return items
     else:
@@ -181,6 +182,9 @@ def print_data(items, criterions, preferences_1, preferences_2):
 if __name__ == "__main__":
     """Main program.
     """
+
+    # Increase threadpool size
+    Pyro4.config.THREADPOOL_SIZE = 256
 
     # Get args
     args = parse_args()

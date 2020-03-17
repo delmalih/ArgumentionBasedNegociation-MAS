@@ -34,6 +34,7 @@ class Engineer(Agent):
         self.__manager = None
         self.__used_arguments = []
         self.__proposed_item = []
+        self.__was_proposed_to_me = []
 
         """Initializes the communication channels.
         """
@@ -81,6 +82,15 @@ class Engineer(Agent):
     def get_least_worst_proposed_item(self):
         """TODO.
         """
+        filtered_proposed_items = []
+        for k, item in enumerate(self.__proposed_item):
+            if self.__was_proposed_to_me[k]:
+                filtered_proposed_items.append(item)
+        if len(filtered_proposed_items) > 0:
+            return sorted(
+                filtered_proposed_items,
+                key=lambda item: self.__preferences.compute_item_score(item),
+                reverse=True)[0]
         return sorted(
             self.__proposed_item,
             key=lambda item: self.__preferences.compute_item_score(item),
@@ -106,6 +116,7 @@ class Engineer(Agent):
         """Sends PROPOSE performative to an engineer with a given item.
         """
         self.__proposed_item.append(item)
+        self.__was_proposed_to_me.append(False)
         self.send_message(engineer, MessagePerformative.PROPOSE, item)
 
     def send_ask_why_item(self, engineer, item):
@@ -124,7 +135,7 @@ class Engineer(Agent):
         self.send_message(engineer, MessagePerformative.ACCEPT, item)
 
     def send_commit_item(self, engineer, item):
-        """TODO.
+        """Send COMMIT message to an engineer.
         """
         self.add_selected_item(item)
         self.send_message(engineer, MessagePerformative.COMMIT, item)
@@ -154,11 +165,12 @@ class Engineer(Agent):
         return answer
 
     def answer_proposed_item(self, message):
-        """TODO.
+        """Answers to a proposed Item.
         """
         sender = message.get_sender()
         proposed_item = message.get_content()
         self.__proposed_item.append(proposed_item)
+        self.__was_proposed_to_me.append(True)
         is_accepted = self.__preferences.belongs_to_10percent_most_preferred(
             proposed_item, self.__list_items)
         if is_accepted:
@@ -179,7 +191,7 @@ class Engineer(Agent):
         return answer
 
     def answer_commited_item(self, message):
-        """TODO.
+        """Answer to a commit message.
         """
         sender = message.get_sender()
         item = message.get_content()
@@ -187,6 +199,9 @@ class Engineer(Agent):
             self.add_selected_item(item)
             answer = Message(self, sender, MessagePerformative.COMMIT, item)
             return answer
+        else:
+            self.send_take_item(self.__manager, item)
+            return
 
     def answer_ask_why_item(self, message):
         """TODO.
@@ -226,6 +241,7 @@ class Engineer(Agent):
             if len(non_proposed_items) > 0:
                 item = self.__preferences.most_preferred(non_proposed_items)
                 self.__proposed_item.append(item)
+                self.__was_proposed_to_me.append(False)
                 answer = Message(self, sender, MessagePerformative.PROPOSE,
                                  item)
             else:
@@ -261,6 +277,7 @@ class Engineer(Agent):
         sender = message.get_sender()
         proposed_item = message.get_content()
         self.__proposed_item.append(proposed_item)
+        self.__was_proposed_to_me.append(True)
         is_accepted = self.__preferences.belongs_to_10percent_most_preferred(
             proposed_item, self.__list_items)
         if is_accepted:
@@ -269,14 +286,14 @@ class Engineer(Agent):
             self.send_ask_why_item(sender, proposed_item)
 
     def treat_accept(self, message):
-        """TODO.
+        """Treat ACCEPT received message.
         """
         sender = message.get_sender()
         item = message.get_content()
         self.send_commit_item(sender, item)
 
     def treat_ask_why(self, message):
-        """TODO.
+        """Treat ASK_WHY received message.
         """
         sender = message.get_sender()
         item = message.get_content()
@@ -293,7 +310,7 @@ class Engineer(Agent):
                 self.send_accept_item(sender, item)
 
     def treat_argue(self, message):
-        """TODO.
+        """Treat ARGUE received message.
         """
         sender = message.get_sender()
         received_argument = message.get_content()
@@ -314,7 +331,7 @@ class Engineer(Agent):
                 self.send_accept_item(sender, item)
 
     def treat_commit(self, message):
-        """TODO.
+        """Treat COMMIT message.
         """
         sender = message.get_sender()
         item = message.get_content()
@@ -326,7 +343,7 @@ class Engineer(Agent):
     # <-- Argumentation --> #
 
     def generate_arguments(self, item, is_positive):
-        """TODO.
+        """Generates an argument given an item.
         """
         arguments = []
         binary_score = self.__preferences.compute_item_binary_score(item)

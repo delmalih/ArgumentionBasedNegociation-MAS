@@ -1,2 +1,3 @@
 osbrain
 numpy
+Pyro4
