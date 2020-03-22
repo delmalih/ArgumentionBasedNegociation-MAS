@@ -38,6 +38,12 @@ def parse_args():
         dest="print_data",
         help="Print the data",
         action="store_true")
+    parser.add_argument(
+        "--n_items",
+        dest="n_items",
+        help="Number of items",
+        default=np.random.randint(2, 11),
+        type=int)
     return parser.parse_args()
 
 
@@ -46,7 +52,7 @@ def init_items(args):
     """
     if args.random:
         items = []
-        for k in range(np.random.randint(2, 11)):
+        for k in range(args.n_items):
             items.append(Item(f"Item{k + 1}", f"Item number {k + 1}"))
         return items
     else:
@@ -184,7 +190,7 @@ if __name__ == "__main__":
     """
 
     # Increase threadpool size
-    Pyro4.config.THREADPOOL_SIZE = 256
+    Pyro4.config.THREADPOOL_SIZE = 2048
 
     # Get args
     args = parse_args()
